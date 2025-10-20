@@ -1,4 +1,4 @@
--- MISSION 1
+..-- MISSION 1
 SELECT *
 FROM observations
 LIMIT 10;
@@ -21,7 +21,7 @@ WHERE region_id = 2;
 SELECT *
 FROM observations
 WHERE observation_date = '1998-08-08';
-
+.
 -- MISSION 6
 -- Región con más observaciones (top 1)
 SELECT region_id, COUNT(*) AS total_observations
@@ -31,20 +31,24 @@ ORDER BY total_observations DESC
 LIMIT 1;
 
 -- MISSION 7
--- Especies con menos de 5 observaciones (de mayor a menor)
-SELECT species_id, COUNT(*) AS observation_count
+SELECT
+species_id,
+COUNT(*) AS observation_count
 FROM observations
 GROUP BY species_id
-HAVING COUNT(*) < 5
+HAVING COUNT(*) > 5
 ORDER BY observation_count DESC;
 
+
 -- MISSION 8
--- Especies con menos de 5 observaciones (de menor a mayor)
-SELECT species_id, COUNT(*) AS total_observations
+SELECT
+  species_id,
+  COUNT(*) AS total_observations
 FROM observations
 GROUP BY species_id
 HAVING COUNT(*) < 5
 ORDER BY total_observations ASC;
+
 
 -- MISSION 9
 -- Observadores con su total de observaciones
@@ -66,24 +70,37 @@ JOIN regions AS r
 -- MISSION 11 
 
 SELECT DISTINCT s.scientific_name
-FROM observations o
-JOIN species s ON s.id = o.species_id;
+FROM observations AS o
+JOIN species AS s ON s.id = o.species_id;
 
 
 -- MISSION 12
 
 WITH counts AS ( 
-    SELECT s.scientific_name,
+    SELECT 
            r.name AS region_name,
+           s.scientific_name,
            COUNT(*) AS observation_count
-    FROM observations o
-    JOIN species s ON s.id = o.species_id
-    JOIN regions r ON r.id = o.region_id
-    GROUP BY s.scientific_name, r.name
+    FROM observations AS o
+    JOIN species AS s ON s.id = o.species_id
+    JOIN regions AS r ON r.id = o.region_id
+    GROUP BY r.name, s.scientific_name
+), ranked AS (
+    SELECT 
+           region_name,
+           scientific_name,
+           observation_count,
+           ROW_NUMBER() OVER (PARTITION BY region_name ORDER BY observation_count DESC) AS rn
+    FROM counts
 )
-SELECT scientific_name, region_name, observation_count
-FROM counts
-ORDER BY region_name, scientific_name;
+
+SELECT 
+       region_name,
+       scientific_name,
+       observation_count
+FROM ranked
+WHERE rn = 1
+ORDER BY observaciones_count DESC;
 
 
 
