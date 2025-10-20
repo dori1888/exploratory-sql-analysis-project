@@ -63,24 +63,28 @@ JOIN regions AS r
   ON o.region_id = r.id;
 
 
--- MISSION 11 - Parte 1
+-- MISSION 11 
+
 SELECT DISTINCT s.scientific_name
 FROM observations o
 JOIN species s ON s.id = o.species_id;
 
+
 -- MISSION 12
-SELECT r.name AS region_name, s.scientific_name, COUNT(*) AS total_observations
-FROM observations o
-JOIN regions r ON o.region_id = r.id
-JOIN species s ON o.species_id = s.id
-GROUP BY r.name, s.scientific_name
-HAVING COUNT(*) = (
-    SELECT MAX(obs_count)
-    FROM (
-        SELECT COUNT(*) AS obs_count
-        FROM observations o2
-        WHERE o2.region_id = o.region_id
-        GROUP BY o2.species_id
-    )
-);
+
+WITH counts AS ( 
+    SELECT s.scientific_name,
+           r.name AS region_name,
+           COUNT(*) AS observation_count
+    FROM observations o
+    JOIN species s ON s.id = o.species_id
+    JOIN regions r ON r.id = o.region_id
+    GROUP BY s.scientific_name, r.name
+)
+SELECT scientific_name, region_name, observation_count
+FROM counts
+ORDER BY region_name, scientific_name;
+
+
+
 
