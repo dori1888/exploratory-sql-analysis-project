@@ -1,4 +1,4 @@
-..-- MISSION 1
+-- MISSION 1
 SELECT *
 FROM observations
 LIMIT 10;
@@ -21,7 +21,7 @@ WHERE region_id = 2;
 SELECT *
 FROM observations
 WHERE observation_date = '1998-08-08';
-.
+
 -- MISSION 6
 -- Región con más observaciones (top 1)
 SELECT region_id, COUNT(*) AS total_observations
@@ -41,11 +41,13 @@ ORDER BY observation_count DESC;
 
 -- MISSION 8
 -- Especies con menos de 5 observaciones (de menor a mayor)
-SELECT species_id, COUNT(*) AS total_observations
-FROM observations
-GROUP BY species_id
-HAVING COUNT(*) < 5
+SELECT s.scientific_name, COUNT(o.species_id) AS total_observations
+FROM observations o
+JOIN species s ON o.species_id = s.id
+GROUP BY s.scientific_name
+HAVING COUNT(o.species_id) < 5
 ORDER BY total_observations ASC;
+
 
 
 -- MISSION 9
