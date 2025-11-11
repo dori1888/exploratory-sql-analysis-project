@@ -1,6 +1,5 @@
 -- MISSION 1
-SELECT *
-FROM observations
+SELECT * FROM observations
 LIMIT 10;
 
 -- MISSION 2
@@ -31,22 +30,21 @@ ORDER BY total_observations DESC
 LIMIT 1;
 
 -- MISSION 7
--- Especies con menos de 5 observaciones (de mayor a menor)
-SELECT species_id, COUNT(*) AS observation_count
+SELECT species_id, COUNT(*) AS total_records
 FROM observations
 GROUP BY species_id
-HAVING COUNT(*) < 5
-ORDER BY observation_count DESC;
+ORDER BY total_records DESC
+LIMIT 5;
+
 
 
 -- MISSION 8
 -- Especies con menos de 5 observaciones (de menor a mayor)
-SELECT s.scientific_name, COUNT(o.species_id) AS total_observations
-FROM observations o
-JOIN species s ON o.species_id = s.id
-GROUP BY s.scientific_name
-HAVING COUNT(o.species_id) < 5
-ORDER BY total_observations ASC;
+SELECT species_id, COUNT(*) AS observation_count
+FROM observations
+GROUP BY species_id
+HAVING observation_count < 5
+ORDER BY observation_count ASC;
 
 
 
@@ -68,10 +66,10 @@ JOIN regions AS r
 
 
 -- MISSION 11 
--- MISSION 11 (corregida)
 SELECT DISTINCT s.scientific_name
-FROM observations o
-JOIN species s ON s.id = o.species_id;
+FROM observations AS o
+JOIN species AS s ON o.species_id = s.id;
+
 
 
 -- MISSION 12
@@ -80,14 +78,15 @@ WITH counts AS (
     SELECT s.scientific_name,
            r.name AS region_name,
            COUNT(*) AS observation_count
-    FROM observations o
-    JOIN species s ON s.id = o.species_id
-    JOIN regions r ON r.id = o.region_id
+    FROM observations AS o
+    JOIN species AS s ON s.id = o.species_id
+    JOIN regions AS r ON r.id = o.region_id
     GROUP BY s.scientific_name, r.name
 )
 SELECT scientific_name, region_name, observation_count
 FROM counts
 ORDER BY region_name, scientific_name;
+
 
 
 
