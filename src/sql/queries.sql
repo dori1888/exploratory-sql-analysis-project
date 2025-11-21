@@ -76,11 +76,20 @@ JOIN species AS s ON o.species_id = s.id;
 
 -- MISSION 12
 
-SELECT *
+SELECT
+  r.name            AS region_name,
+  s.scientific_name,
+  COUNT(*)          AS observation_count
 FROM observations AS o
-JOIN species AS s ON o.species_id = s.id
-JOIN regions AS r ON o.region_id = r.id
-GROUP BY o.region_id;
+JOIN species  AS s ON o.species_id = s.id
+JOIN regions  AS r ON o.region_id = r.id
+GROUP BY
+  r.id,
+  s.id
+ORDER BY
+  r.name,
+  observation_count DESC;
+
 
  
 
