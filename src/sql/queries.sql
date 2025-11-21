@@ -57,6 +57,7 @@ ORDER BY total DESC;
 
 -- MISSION 10
 -- Observaciones unidas con regiones
+
 SELECT o.id,
        r.name AS region_name,
        o.observation_date
@@ -72,20 +73,18 @@ JOIN species AS s ON o.species_id = s.id;
 
 
 
+
 -- MISSION 12
 
-WITH counts AS ( 
-    SELECT s.scientific_name,
-           r.name AS region_name,
-           COUNT(*) AS observation_count
-    FROM observations AS o
-    JOIN species AS s ON s.id = o.species_id
-    JOIN regions AS r ON r.id = o.region_id
-    GROUP BY s.scientific_name, r.name
-)
-SELECT scientific_name, region_name, observation_count
-FROM counts
-ORDER BY region_name, scientific_name;
+SELECT *
+FROM observations AS o
+JOIN species AS s ON o.species_id = s.id
+JOIN regions AS r ON o.region_id = r.id
+GROUP BY o.region_id;
+
+ 
+
+
 
 
 
